@@ -1,0 +1,7 @@
+{% load i18n %}
+
+{% block html %}
+    <p>{% blocktrans with url_name=instance.post_url %}Evaluation for the url {{ url_name }} has been obtained.{% endblocktrans %}</p>
+
+    <a href="{% url "admin:survey_app_websiteevaluation_change" instance.pk %}" class="btn">{% trans "Click the link to view the saved instance" %}</a>
+{% endblock %}

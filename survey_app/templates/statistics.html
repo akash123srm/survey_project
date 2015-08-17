@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% load render_table from django_tables2 %}
+<body>
+{% block content %}
+    </br></br>
+    <div class="panel panel-primary">
+  <div class="panel-heading"><h3 align="center"><i>Dashboard for survey statistics!!</i></h3></div>
+    <table class="table">
+    {% render_table evaluation_table %}
+    </table>
+  </div>
+    </br> </br> </br> </br> </br> </br> </br> </br>
+{% endblock %}
+</body>

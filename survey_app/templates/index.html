@@ -1,0 +1,5 @@
+{% load i18n admin_static %}
+{% load render_table from django_tables2 %}
+{% block content %}
+{% render_table evaluation_table "django_tables2/table_bootstrap2.html" %}
+{% endblock %}

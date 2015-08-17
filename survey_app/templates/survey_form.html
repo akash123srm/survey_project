@@ -1,0 +1,287 @@
+{% extends "base.html" %}
+<!DOCTYPE html>
+<html>
+<body>
+{% block content %}
+    <head lang="en">
+    {% load i18n bootstrap3 static %}
+    <meta charset="UTF-8">
+   <!--<link rel="stylesheet" type="text/css" href="/static/css/tooltipster.css" />-->
+         <link rel="stylesheet" type="text/css" href="css/tooltipster.css" />
+         <script type="text/javascript" src="{{STATIC_URL}}js/jquery-1.11.2.min.js"></script>
+         <script type="text/javascript" src="{{STATIC_URL}}js/jquery.tooltipster.min.js" type="text/javascript"></script>
+         <script type="text/javascript" src="{{STATIC_URL}}js/explanation.js" type="text/javascript"></script>
+    </head>
+    <form action="{% url 'survey_view' %}" method="post">
+    {% csrf_token %}
+    <div id="survey_form" class="container">
+
+        <div class="row">
+         <div  class="col-md-12">
+             <h4><b>Information Need:</b></h4><p>An information need describes the information that needs to be satisfied.
+                    It is the information which user demands to satisfy his/her specific need.</p>
+         </div>
+        </div>
+        <!--
+         <div class="row">
+         <div  class="col-md-12">
+            <p class="alert alert-info" role="alert">Please click on the below tabs to get description of respective fields.</p>
+         </div>
+        </div>
+        -->
+        <!--
+        <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+            <div class="panel panel-default">
+    <div class="panel-heading" role="tab" id="headingOne">
+      <h4 class="panel-title">
+        <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+           Time Constraint
+        </a>
+      </h4>
+    </div>
+
+         <div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
+      <div class="panel-body">
+           <h4><strong><i>Time Constraint:</i></strong></h4><p> Time is a really important aspect for an information need
+             and its satisfaction.So this first axes signifies if the user addresses his information need to at a specific
+             time or not.</p>
+
+          </div>
+             </div>
+                </div>
+
+             <div class="panel panel-default">
+    <div class="panel-heading" role="tab" id="headingTwo">
+      <h4 class="panel-title">
+        <a data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" aria-expanded="true" aria-controls="collapseTwo">
+          Validity Of Answer
+        </a>
+      </h4>
+    </div>
+         <div id="collapseTwo" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingTwo">
+      <div class="panel-body">
+           <h4><strong><i>Validity Of Answer:</i></strong></h4><p>It signifies dependence between the time and the information need and the answer,
+         which satisfies the information need .i.e. How long the answer to a corresponding information need will be valid.</p>
+
+          </div>
+             </div>
+                </div>
+
+             <div class="panel panel-default">
+    <div class="panel-heading" role="tab" id="headingThree">
+      <h4 class="panel-title">
+        <a data-toggle="collapse" data-parent="#accordion" href="#collapseThree" aria-expanded="true" aria-controls="collapseThree">
+         Generality of Applicability
+        </a>
+      </h4>
+    </div>
+         <div id="collapseThree" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingThree">
+      <div class="panel-body">
+           <h4><strong><i>Generality of Applicability:</i></strong></h4><p>It signifies  whether the information need is for a
+          particular user or if other users could have the same information need.</p>
+
+          </div>
+             </div>
+                </div>
+
+            <div class="panel panel-default">
+    <div class="panel-heading" role="tab" id="headingFour">
+      <h4 class="panel-title">
+        <a data-toggle="collapse" data-parent="#accordion" href="#collapseFour" aria-expanded="true" aria-controls="collapseFour">
+         Location Constraint
+        </a>
+      </h4>
+    </div>
+         <div id="collapseFour" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingFour">
+      <div class="panel-body">
+           <h4><strong><i>Location Constraint:</i></strong></h4><p>It signifies,if an information need is influenced by
+             the location i.e. if location is an important factor in providing an answer to the user's information need.
+            </p>
+          </div>
+             </div>
+                </div>
+
+            <div class="panel panel-default">
+    <div class="panel-heading" role="tab" id="headingFive">
+      <h4 class="panel-title">
+        <a data-toggle="collapse" data-parent="#accordion" href="#collapseFive" aria-expanded="true" aria-controls="collapseFive">
+         Knowledge Codification
+        </a>
+      </h4>
+    </div>
+         <div id="collapseFive" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingFive">
+      <div class="panel-body">
+           <h4><strong><i>Knowledge Codification:</i></strong></h4><p>Knowledge codification denotes how codified the
+             knowledge that is needed to satisfy the information need is .i.e. if the knowledge needed to satisfy user's
+             information need is a commonly accepted knowledge or fact for e.g.in form of books or articles or if it is something
+             very widely discussed or controversial.</p>
+          </div>
+             </div>
+                </div>
+        </div>-->
+         <div class="row">
+        <div  class="col-md-12">
+            <h4> Please click on the url <i class="glyphicon glyphicon-arrow-down"></i>below,have a look at the information need addressed,review it & then answer the
+               following questions below.</h4>
+       <a class="url huge" href="{{ url }}" target="_blank">{{ url }}</a>
+            <p>If the URL is not available or it is not possible to read the content, please simply <a href="javascript:location.reload()">refresh this page</a> to get a new URL.</p>
+        </div>
+    </div>
+
+     <div id="row-2" class="row">
+        <div class="col-md-12">
+          <div id="field1">
+
+              {% bootstrap_field form.time_constraint %}
+
+           <p><strong>Hard Constraint - </strong> If the information need is addressed at a specific time. For instance
+                  if a user needs to get an idea for a good Christmas present, then the information need is clearly addressed
+                  at a specific time with the urgency depending on the current date.</p>
+           <p><strong>Soft Constraint - </strong> If the information need is addressed at a vague time. For instance if the
+              information need is of the kind:"Any ideas for summer holidays?".</p>
+           <p><strong>Independent - </strong> Not dependent on the time. For instance if the information need
+              is of the kind: "What is your favourite football team?". </p>
+
+
+          </div>
+        </div>
+    </div>
+      <div class="row">
+        <div class="col-md-12">
+        <div id="field2">
+            {% bootstrap_field form.answer_validity %}
+          <p><strong>Long - </strong> Information need which is valid for a very long time (e.g. decades, centuries, forever).For instance,
+              "When was Mozart born?" - the answer is valid forever.</p>
+          <p><strong>Medium - </strong> Information need which is valid for a long time (e.g. months, maybe years). For instance,
+              "Who is the current football player of the year?" or "How much does the new MacBook Pro cost?"</p>
+          <p><strong>Short - </strong> Information need which is valid for a short time (e.g. hours, days, maybe weeks). For instance,
+              "Will it be sunny tomorrow?"</p>
+        </div>
+
+        </div>
+    </div>
+        <div class="row">
+           <div class="col-md-12">
+          <div id="field3"> {% bootstrap_field form.generality_applicability %}
+          <p><strong>High Generality - </strong> This includes all the information needs that are not tailored to one particular
+              user. So the information need is shared by a lot of people, for instance: "What is the average cost of living
+              in Munich?"</p>
+          <p><strong>Medium Generality - </strong> This covers all the information needs that are needed to satisfy a specific problem that
+           targets a specific subset of people, for instance: "How to compute running time in Java?". In this case the given
+           information need targets programmers.</p>
+          <p><strong>Low Generality - </strong> This covers all the information needs that are needed to satisfy a specific problem
+              that a particular user has, for instance: "My GRE score is 310. Is this sufficient to get admission in a good university
+              in the United States?". In this case the information need is related to only the specific user who has a GRE score of 310.</p>
+          </div>
+            </div>
+        </div>
+        <div class="row">
+           <div class="col-md-12">
+               <div id="field4">
+                   {% bootstrap_field form.location_constraint %}
+            <p><strong>High - </strong> It signifies that user's location has a definite impact on information need &amp; the
+                type of answer expected, for instance: "Where is the closest ALDI supermarket to Klinikum Grosshadern U-Bahn
+                Station?"</p>
+            <p><strong>Low - </strong> It signifies that location does not impact the information need, for instance: "Which is
+                the best Android phone in the market at present?"</p>
+               </div>
+            </div>
+        </div>
+         <div class="row">
+           <div class="col-md-12">
+         <div id="field5"> {% bootstrap_field form.degree_knowledge %}
+         <p><strong>High - </strong> Knowledge that is needed to satisfy an information need is codified i.e. it is generally
+             defined in form of facts (books or articles), for instance: "What are the symptoms of Parkinson’s
+             disease?"</p>
+        <p><strong>Low - </strong> Knowledge that is needed is not codified i.e. it is widely discussed &amp; controversial,
+            for instance questions that are asking for recommendation (e.g. "What is the best restaurant in Munich?") or opinions
+            (e.g. "Do you like the new BMW i3?")</p>
+         </div>
+            </div>
+        </div>
+         <div class="row">
+           <div class="col-md-12">
+         <div id="field5"> {% bootstrap_field form.costs_parameters %}</div>
+            </div>
+        </div>
+         <div class="row">
+           <div class="col-md-12">
+         <div id="field5"> {% bootstrap_field form.info_provider_layman %}
+         <p><strong>Layman- </strong>This covers all the lay people that provide information for others.</p>
+         </div>
+            </div>
+        </div>
+         <div class="row">
+           <div class="col-md-12">
+         <div id="field5"> {% bootstrap_field form.info_provider_operator %}
+          <p><strong>Operator- </strong>This includes all company-information-providers who satisfy information needs
+                                      regarding their products or services.</p>
+         </div>
+            </div>
+        </div>
+         <div class="row">
+           <div class="col-md-12">
+         <div id="field5"> {% bootstrap_field form.info_provider_expert %}
+          <p><strong>Expert- </strong>This has a certain certificate for his knowledge. It could be someone like a doctor,
+                                      a lawyer or even an editor.</p>
+         </div>
+            </div>
+        </div>
+         <div class="row">
+           <div class="col-md-12">
+         <div id="field5"> {% bootstrap_field form.mobile_context %}</div>
+            </div>
+        </div>
+        <div class="row">
+           <div class="col-md-12">
+         <div id="field5"> {% bootstrap_field form.spatial_coordinates %}</div>
+            </div>
+        </div>
+
+        <div class="row">
+           <div class="col-md-12">
+         <div id="field5"> {% bootstrap_field form.ask_questions %}</div>
+            </div>
+        </div>
+
+         <div class="row">
+           <div class="col-md-12">
+         <div id="field5"> {% bootstrap_field form.suggestions %}</div>
+            </div>
+        </div>
+
+         <div class="row">
+           <div class="col-md-12">
+         <div id="field5"> {% bootstrap_field form.comment %}</div>
+            </div>
+        </div>
+
+         <div class="row">
+           <div class="col-md-12">
+         <div id="field5"> {% bootstrap_field form.personal_profile %}</div>
+            </div>
+        </div>
+
+         <div class="row">
+           <div class="col-md-12">
+         <div id="field5"> {% bootstrap_field form.others_information_need %}</div>
+            </div>
+        </div>
+
+         <div class="row">
+           <div class="col-md-12">
+         <div id="field5"> {% bootstrap_field form.contact_user %}</div>
+            </div>
+        </div>
+
+        <div class="row">
+             <div class="col-sm-9">
+          <input type="submit" name ="Submit" value="Submit" />
+             </div>
+        </div>
+        <input type="hidden" name="url" value="{{ url }}" />
+    </div>
+</form>
+{% endblock %}
+</body>
+</html>
