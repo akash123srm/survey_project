@@ -19,7 +19,16 @@ class Website(models.Model):
 class WebsiteEvaluation(models.Model):
     user_id = models.CharField('User ID', max_length=200, null=True, blank=True,
               help_text=_('Helps to avoid a user to rate the same URL multiple times during his or her session.'))
+
+    completion_code = models.CharField('Completion Code', max_length=200, null=True, blank=True,
+              help_text=_('Helps to check if the worker completed his task as desired.'))
+
+    time_delta = models.IntegerField('The time duration for this url link to get evaluated in minutes', null=True, blank=True, default=None,
+                                  help_text=_('Helps to find out time difference between '
+                                             'when a form is shown and when it is submitted.'))
+
     post_url = models.ForeignKey('Post',related_name='evaluation_axis',null=True,blank=True)
+
     TIME_CONSTRAINT_CHOICES = (
         (TimeConstraint.HARD_CONSTRAINT, 'Hard Constraint'),
         (TimeConstraint.SOFT_CONSTRAINT, 'Soft Constraint'),
@@ -49,10 +58,13 @@ class WebsiteEvaluation(models.Model):
         )
 
     COST_CHOICES = (
-        (CostsParameters.FEE_BASED, 'Fee based'),
-        (CostsParameters.PARTIALLY_FREE, 'Partially free'),
-        (CostsParameters.FREE, 'Free')
+        (CostsParameters.FEE_BASED, 'Fee based(i.e., you have to pay for the content)'),
+        (CostsParameters.PARTIALLY_FREE, 'Partially free(i.e., some services are free, but others require payment)'),
+        (CostsParameters.FREE, 'Free(i.e. no fees occur, all content is available without any fees)')
     )
+
+    info_need_identification =  models.BooleanField('Information Need Identification',default=False,
+                    help_text='Was it possible to identify an information need on the website referenced')
 
     time_constraint = models.CharField('Time Constraint',max_length=50,
                                       choices= TIME_CONSTRAINT_CHOICES,
@@ -120,7 +132,14 @@ class WebsiteEvaluation(models.Model):
 
     contact_user = models.BooleanField('Contact other Users',default=False,
                    help_text='Is it possible to contact the user, who had the information need?')
-    
+
+
+    def is_time_duration_valid(self):
+        return not self.time_delta < 2
+    is_time_duration_valid.admin_order_field = 'time_delta'
+    is_time_duration_valid.boolean = True
+    is_time_duration_valid.short_description = 'Was the time to fill the questions valid'
+
     def __str__(self):
         return "%s" % self.post_url
 

@@ -40,35 +40,35 @@ class PostAdmin(admin.ModelAdmin):
 class WebsiteEvaluationAdmin(admin.ModelAdmin):
 
     form = WebsiteEvaluationAdminForm
-    list_display = ['post_url','time_constraint','answer_validity',
+    list_display = ['post_url','time_delta','time_constraint','is_time_duration_valid','answer_validity',
                     'generality_applicability','location_constraint',
-                    'degree_knowledge','costs_parameters','info_provider_layman','info_provider_operator','info_provider_expert',
+                    'degree_knowledge','costs_parameters','info_need_identification','info_provider_layman','info_provider_operator','info_provider_expert',
                     'mobile_context','spatial_coordinates','ask_questions','suggestions','comment',
                     'personal_profile','others_information_need','contact_user','user_id']
 
-    list_filter = ['post_url', 'time_constraint', 'answer_validity',
+    list_filter = ['post_url', 'time_delta', 'time_constraint', 'answer_validity',
                    'generality_applicability', 'location_constraint',
-                   'degree_knowledge','costs_parameters','info_provider_layman','info_provider_operator','info_provider_expert',
+                   'degree_knowledge','costs_parameters','info_need_identification','info_provider_layman','info_provider_operator','info_provider_expert',
                    'mobile_context','spatial_coordinates','ask_questions','suggestions','comment',
                    'personal_profile','others_information_need','contact_user','user_id']
 
     actions = ['export_csv','aggregate_data']
 
-    def aggregate_data(self,request,queryset):
+    def aggregate_data(self, request, queryset):
         response = HttpResponse(content_type='text/csv')
         response['Content-Disposition'] = 'attachment; filename=aggregated_data.csv'
         writer = csv.writer(response, csv.excel)
         response.write(u'\ufeff'.encode('utf8')) # BOM (optional...Excel needs it to open UTF-8 file properly)"""
         result_dict = {}
-        dict_time_constraint= {"Independent": 0, "Soft":1,
-                              "Hard":2}
-        dict_answer_validity = {"Short": 0, "Medium":1,
-                              "Long":2}
-        dict_generality_applicability = {"Low": 0, "Medium":1,
-                              "High":2}
-        dict_location_constraint =  {"Low": 0, "High":1}
+        dict_time_constraint= {"Independent": 0, "Soft": 1,
+                              "Hard": 2}
+        dict_answer_validity = {"Short": 0, "Medium": 1,
+                              "Long": 2}
+        dict_generality_applicability = {"Low": 0, "Medium": 1,
+                              "High": 2}
+        dict_location_constraint =  {"Low": 0, "High": 1}
         dict_degree_knowledge = dict_location_constraint.copy()
-        dict_boolean = {False: 0, True:1}
+        dict_boolean = {False: 0, True: 1}
         #dict_mobility_sociality = dict_boolean.copy()
         dict_costs_parameters = {"Free": 0, "Partially Free": 1, "Fee Based": 2}
         dict_info_provider = dict_mobility_sociality = dict_boolean.copy()

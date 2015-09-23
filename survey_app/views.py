@@ -1,7 +1,10 @@
 import random
 import string
-from django.shortcuts import render, get_object_or_404
-from django.http import HttpResponseRedirect, HttpResponse
+from time import strftime, gmtime,strptime
+import datetime
+from datetime import datetime
+from django.shortcuts import render
+from django.http import HttpResponseRedirect
 from .forms import EvaluationForm
 from .models import WebsiteEvaluation,Post
 from .models import *
@@ -14,9 +17,8 @@ from django.views.generic.base import TemplateView
 
 # Create your views here.
 
-
-class SuccessView(TemplateView):
-    template_name="success.html"
+class LandingView(TemplateView):
+    template_name="landing.html"
 
     def get_context_data(self, **kwargs):
         pass
@@ -24,16 +26,25 @@ class SuccessView(TemplateView):
 
 def survey_view(request):
     #sets the expiry date of a session in future
+
     request.session.set_expiry(timezone.now() + datetime.timedelta(days=365))
     if request.session._session_key:
         USER_ID = request.session._session_key
     else:
         USER_ID = ''.join(random.choice(string.ascii_lowercase + string.digits) for _ in range(32))
 
-    print(request.session.get_expiry_age())
+    time_value = datetime.time(hour=datetime.datetime.now().hour, minute=datetime.datetime.now().minute, second=datetime.datetime.now().second)
+    print time_value
     if request.method == 'POST':
        form = EvaluationForm(request.POST)
        if form.is_valid():
+               time_shown = strptime(request.POST['time_value'], '%H:%M:%S')
+               print time_shown
+               print time_value
+               duration_minutes = round((datetime.timedelta(hours=time_value.hour, minutes=time_value.minute, seconds=time_value.second)-\
+                   datetime.timedelta(hours=time_shown.tm_hour, minutes=time_shown.tm_min, seconds=time_shown.tm_sec)).seconds/60,2)
+               print duration_minutes
+
                p,created = Post.objects.get_or_create(url=request.POST['url'])
                p.save()
                evaluation,created = WebsiteEvaluation.objects.get_or_create(user_id=USER_ID, post_url=p,
@@ -43,6 +54,7 @@ def survey_view(request):
                                                     location_constraint=form.cleaned_data['location_constraint'],
                                                     degree_knowledge=form.cleaned_data['degree_knowledge'],
                                                     costs_parameters=form.cleaned_data['costs_parameters'],
+                                                    info_need_identification=form.cleaned_data['info_need_identification'],
                                                     info_provider_layman=form.cleaned_data['info_provider_layman'],
                                                     info_provider_operator=form.cleaned_data['info_provider_operator'],
                                                     info_provider_expert=form.cleaned_data['info_provider_expert'],
@@ -53,25 +65,40 @@ def survey_view(request):
                                                     comment=form.cleaned_data['comment'],
                                                     personal_profile=form.cleaned_data['personal_profile'],
                                                     others_information_need=form.cleaned_data['others_information_need'],
-                                                    contact_user=form.cleaned_data['contact_user']
+                                                    contact_user=form.cleaned_data['contact_user'],
+                                                    time_delta=duration_minutes
                                                     )
                evaluation.save()
-               return HttpResponseRedirect(reverse('success_view'))
+               return HttpResponseRedirect(reverse('survey_view'))
     else:
         form = EvaluationForm()
     posts = [p for p in Post.objects.all()]
-    #posts_evaluated = [p.post_url for p in WebsiteEvaluation.objects.filter(user_id=USER_ID)]
     posts_evaluated = [p.post_url for p in WebsiteEvaluation.objects.all()]
-    print posts
-    print posts_evaluated
+    posts_evaluated_per_user = [p.post_url for p in WebsiteEvaluation.objects.filter(user_id=USER_ID)]
+    #print posts
+    #print posts_evaluated
     posts_random = list(Set(posts).difference(Set(posts_evaluated)))
     print(len(posts_random))
-    if len(posts_random) == 0:
-        return HttpResponseRedirect(reverse('evaluation_complete_view'))
-    else:
-        url = random.choice(posts_random)
-        return render(request, 'survey_form.html', {'form': form, 'url': url})
+    if len(posts_evaluated_per_user) >= 2:
+        success_code = 'AAA' + ''.join(random.choice(string.digits) for _ in range(3))
+        return render(request, 'success_code.html', {'success_code': success_code})
 
+    else:
+
+        url = random.choice(posts_random)
+        return render(request, 'survey_form.html', {'form': form,
+                                                    'url': url,
+                                                    'evaluation_count': len(posts_evaluated_per_user),
+                                                    'total_count': 10,
+                                                    'time_value': time_value}
+                      )
+
+
+class SuccessView(TemplateView):
+    template_name="success.html"
+
+    def get_context_data(self, **kwargs):
+        pass
 
 class StatisticsView(TemplateView):
     template_name = "statistics.html"
@@ -83,8 +110,8 @@ class StatisticsView(TemplateView):
         return {'evaluation_table': evaluation_table}
 
 
-class EvaluationCompleteView(TemplateView):
-    template_name = "evaluation_complete.html"
+class SuccessCodeView(TemplateView):
+    template_name = "success_code.html"
 
     def get_context_data(self, **kwargs):
         pass

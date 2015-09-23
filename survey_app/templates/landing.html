@@ -1,0 +1,15 @@
+
+<body>
+{% block content %}
+    <h1>Welcome!</h1>
+<ul>
+<li><b>Survey</b>: Evaluate 10 websites, answer ~15 questions for each website</li>
+<li><b>Duration</b>: Approx. 1-3 minutes per website, ~15-20 minutes in total</li>
+<li><b>After evaluating all 10(!) websites</b>, a individual code is shown to prove that you successfully completed the work</li>
+</ul>
+
+<p>Please answer all questions thoroughly.</p>
+<p><a href="{% url "survey_view" %}">I understood everything and would like to start</a></p>
+
+{% endblock %}
+</body>

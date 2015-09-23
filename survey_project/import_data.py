@@ -22,7 +22,7 @@ if __name__ == '__main__':
     # CSV Format:
     # Website name,Category of the website, URL_of_acticle
 
-    f = open("static/test_data_revised.csv","r")
+    f = open("static/thesis_data.csv","r")
     content = f.read()
     f.close()
     lines = content.split("\n")
@@ -38,6 +38,6 @@ if __name__ == '__main__':
         print token
         w,created = Website.objects.get_or_create(name=token[0],category=token[1])
         print(token[1])
-        w.save()
+        # w.save()
         p,created = Post.objects.get_or_create(url=token[2],website=w)
-        p.save()
+        # p.save()
