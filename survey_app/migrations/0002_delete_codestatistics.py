@@ -7,12 +7,11 @@ from django.db import models, migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('survey_app', '0005_auto_20150308_2001'),
+        ('survey_app', '0001_initial'),
     ]
 
     operations = [
-        migrations.RemoveField(
-            model_name='websiteevaluation',
-            name='user_id',
+        migrations.DeleteModel(
+            name='CodeStatistics',
         ),
     ]

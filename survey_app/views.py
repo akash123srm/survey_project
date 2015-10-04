@@ -1,20 +1,21 @@
 import random
 import string
+import math
 from time import strftime, gmtime,strptime
 import datetime
 from datetime import datetime
 from django.shortcuts import render
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponseNotFound
 from .forms import EvaluationForm
 from .models import WebsiteEvaluation,Post
 from .models import *
 from django.core.urlresolvers import reverse
 from django.utils import formats, timezone
 from sets import Set
-from .tables import WebsiteEvaluationTable
+from .tables import WebsiteEvaluationTable,CodeStatisticsTable
 from django_tables2   import RequestConfig
 from django.views.generic.base import TemplateView
-
+from django.contrib import messages
 # Create your views here.
 
 class LandingView(TemplateView):
@@ -34,18 +35,15 @@ def survey_view(request):
         USER_ID = ''.join(random.choice(string.ascii_lowercase + string.digits) for _ in range(32))
 
     time_value = datetime.time(hour=datetime.datetime.now().hour, minute=datetime.datetime.now().minute, second=datetime.datetime.now().second)
-    print time_value
+
     if request.method == 'POST':
        form = EvaluationForm(request.POST)
        if form.is_valid():
                time_shown = strptime(request.POST['time_value'], '%H:%M:%S')
-               print time_shown
-               print time_value
-               duration_minutes = round((datetime.timedelta(hours=time_value.hour, minutes=time_value.minute, seconds=time_value.second)-\
-                   datetime.timedelta(hours=time_shown.tm_hour, minutes=time_shown.tm_min, seconds=time_shown.tm_sec)).seconds/60,2)
+               duration_minutes = round(float((datetime.timedelta(hours=time_value.hour, minutes=time_value.minute, seconds=time_value.second)-\
+                   datetime.timedelta(hours=time_shown.tm_hour, minutes=time_shown.tm_min, seconds=time_shown.tm_sec)).seconds)/60,2)
                print duration_minutes
-
-               p,created = Post.objects.get_or_create(url=request.POST['url'])
+               p, created = Post.objects.get_or_create(url=request.POST['url'])
                p.save()
                evaluation,created = WebsiteEvaluation.objects.get_or_create(user_id=USER_ID, post_url=p,
                                                     time_constraint = form.cleaned_data['time_constraint'],
@@ -78,9 +76,18 @@ def survey_view(request):
     #print posts
     #print posts_evaluated
     posts_random = list(Set(posts).difference(Set(posts_evaluated)))
-    print(len(posts_random))
-    if len(posts_evaluated_per_user) >= 2:
-        success_code = 'AAA' + ''.join(random.choice(string.digits) for _ in range(3))
+
+    if len(posts_evaluated_per_user) >= 3:
+        success_code = ''.join(random.choice(string.ascii_uppercase) for _ in range(3)) + \
+                       ''.join(random.choice(string.digits) for _ in range(3))
+        try:
+            obj = CodeStatistics.objects.get(worker=USER_ID)
+
+
+        except CodeStatistics.DoesNotExist:
+            obj = None
+            c, created = CodeStatistics.objects.get_or_create(worker=USER_ID, completion_code=success_code)
+            c.save()
         return render(request, 'success_code.html', {'success_code': success_code})
 
     else:
@@ -89,7 +96,7 @@ def survey_view(request):
         return render(request, 'survey_form.html', {'form': form,
                                                     'url': url,
                                                     'evaluation_count': len(posts_evaluated_per_user),
-                                                    'total_count': 10,
+                                                    'total_count': 3,
                                                     'time_value': time_value}
                       )
 
@@ -107,7 +114,21 @@ class StatisticsView(TemplateView):
         objects = set([w.post_url for w in WebsiteEvaluation.objects.all()])
         evaluation_table = WebsiteEvaluationTable(objects)
         RequestConfig(self.request).configure(evaluation_table)
-        return {'evaluation_table': evaluation_table}
+        p_evaluated = WebsiteEvaluation.objects.all()
+        if len(p_evaluated):
+            self.average_time_delta = (sum([t.time_delta for t in WebsiteEvaluation.objects.all()]))/len(p_evaluated)
+        return {'evaluation_table': evaluation_table,
+                'average_time': round(self.average_time_delta, 2)}
+
+
+class StatisticsCodeView(TemplateView):
+    template_name = "statistics_code.html"
+
+    def get_context_data(self, **kwargs):
+        code_statistics_table = CodeStatisticsTable(CodeStatistics.objects.all())
+        RequestConfig(self.request).configure(code_statistics_table)
+        return {'code_statistics_table': code_statistics_table
+               }
 
 
 class SuccessCodeView(TemplateView):

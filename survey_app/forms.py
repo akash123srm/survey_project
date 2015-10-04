@@ -28,7 +28,8 @@ class EvaluationForm(ModelForm):
             'location_constraint': 'What is the level of <u>location dependency</u> for the information need or the information addressed in the link above?',
             'degree_knowledge': 'What is the level of <u>knowledge codification</u> for the information need or the information addressed in the link above?',
             'costs_parameters': 'What is the cost structure of the website you visited?',
-            'info_need_identification': 'It was possible for me to identify an information need on the website referenced by the link above',
+            'info_need_identification': 'It was possible for me to identify an information need on the website referenced \
+             by the link above (an information need describes the problem a person would like to solve).',
             'info_provider_layman': 'Layman- This covers all the lay people that provide information for others.',
             'info_provider_operator':'Operator- This includes all company-information-providers who satisfy information'
                                      ' needs regarding their products or services.',

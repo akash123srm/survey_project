@@ -6,7 +6,7 @@ from django.core.urlresolvers import reverse
 from .enums import (TimeConstraint, AnswerValidity,
                    GeneralityApplicability, LocationConstraint,
                    DegreeKnowledge,CostsParameters)
-
+from sets import Set
 # Create your models here.
 
 class Website(models.Model):
@@ -20,10 +20,7 @@ class WebsiteEvaluation(models.Model):
     user_id = models.CharField('User ID', max_length=200, null=True, blank=True,
               help_text=_('Helps to avoid a user to rate the same URL multiple times during his or her session.'))
 
-    completion_code = models.CharField('Completion Code', max_length=200, null=True, blank=True,
-              help_text=_('Helps to check if the worker completed his task as desired.'))
-
-    time_delta = models.IntegerField('The time duration for this url link to get evaluated in minutes', null=True, blank=True, default=None,
+    time_delta = models.FloatField('The time duration for this url link to get evaluated in minutes', null=True, blank=True, default=None,
                                   help_text=_('Helps to find out time difference between '
                                              'when a form is shown and when it is submitted.'))
 
@@ -72,13 +69,13 @@ class WebsiteEvaluation(models.Model):
 
     answer_validity = models.CharField('Validity of Answer',max_length=50,
                                       choices= ANSWER_VALIDITY_CHOICES,
-                                      default=None)
+                                      default=None,)
 
     generality_applicability = models.CharField('Generality Of Applicability',max_length=50,
                                       choices=GENERALITY_OF_APPLICABILITY_CHOICES ,
                                       default=None)
 
-    location_constraint = models.CharField('Location Constraint',max_length=50,
+    location_constraint = models.CharField('Location Constraint', max_length=50,
                                       choices=LOCATION_CONSTRAINT_CHOICES,
                                       default=None)
 
@@ -146,11 +143,20 @@ class WebsiteEvaluation(models.Model):
 
 class Post(models.Model):
     url = models.URLField('Url',max_length=200)
-    website = models.ForeignKey(Website,related_name='urls')
+    website = models.ForeignKey(Website, related_name='urls')
 
     def get_url_count(self):
         evaluations = [w.post_url for w in WebsiteEvaluation.objects.all()]
         return evaluations.count(self)
 
+    def get_time_delta(self):
+        return [t.time_delta for t in self.evaluation_axis.all()]
+
     def __str__(self):
         return "%s" % self.url
+
+
+class CodeStatistics(models.Model):
+    worker = models.CharField('Worker ID', max_length=200)
+    completion_code = models.CharField('Completion Code', max_length=200, null=True, blank=True,
+              help_text=_('Helps to check if the worker completed his task as desired.'))

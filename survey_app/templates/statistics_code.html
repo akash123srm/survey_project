@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% load render_table from django_tables2 %}
+<head>
+     <script type="text/javascript">
+         function disableF5(e) { if ((e.which || e.keyCode) == 116 || (e.which || e.keyCode) == 82) e.preventDefault(); };
+
+             $(document).ready(function(){
+             $(document).on("keydown", disableF5);
+              });
+</script>
+
+</head>
+<body>
+{% block content %}
+    </br></br>
+   <div class="code">
+    <div class="panel panel-primary" align="center">
+  <div class="panel-heading"><h3 align="center"><i>Dashboard for code statistics!!</i></h3></div>
+    <table class="table">
+    {% render_table code_statistics_table %}
+    </table>
+  </div>
+    </div>
+    </br> </br> </br> </br> </br> </br> </br> </br>
+{% endblock %}
+</body>

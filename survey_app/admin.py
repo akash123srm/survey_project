@@ -3,7 +3,7 @@ import math
 import operator
 from django.contrib import admin
 # Register your models here.
-from .models import Website,Post,WebsiteEvaluation
+from .models import Website, Post, WebsiteEvaluation, CodeStatistics
 from .forms import PostAdminForm, WebsiteEvaluationAdminForm
 from django.utils.translation import ugettext_lazy as _
 from django.core.urlresolvers import reverse
@@ -218,29 +218,62 @@ class WebsiteEvaluationAdmin(admin.ModelAdmin):
         writer = csv.writer(response, csv.excel)
         response.write(u'\ufeff'.encode('utf8')) # BOM (optional...Excel needs it to open UTF-8 file properly)
         writer.writerow([
+        smart_str(u"Website"),
+        smart_str(u"Category"),
         smart_str(u"Url"),
         smart_str(u"Time Constraint"),
         smart_str(u"Answer Validity"),
         smart_str(u"Generality Of Applicability"),
         smart_str(u"Location Dependency"),
-        smart_str(u"Knowledge Codification")
+        smart_str(u"Knowledge Codification"),
+        smart_str(u"Costs Category"),
+        smart_str(u"Information Provider Layman"),
+        smart_str(u"Information Provider Operator"),
+        smart_str(u"Information Provider Expert"),
+        smart_str(u"Mobile Context"),
+        smart_str(u"Spatial Coordinates"),
+        smart_str(u"Ask Questions"),
+        smart_str(u"Give Suggestions"),
+        smart_str(u"Rate or Comment"),
+        smart_str(u"Create Personal Profile"),
+        smart_str(u"Others Information Needs"),
+        smart_str(u"Contact Other Users")
         ])
         for obj in queryset:
             print obj.info_provider_operator
             writer.writerow([
+                smart_str(obj.post_url.website.name),
+                smart_str(obj.post_url.website.category),
                 smart_str(obj.post_url),
                 smart_str(obj.time_constraint),
                 smart_str(obj.answer_validity),
                 smart_str(obj.generality_applicability),
                 smart_str(obj.location_constraint),
                 smart_str(obj.degree_knowledge),
-                smart_str(obj.user_id),
                 smart_str(obj.costs_parameters),
                 smart_str(obj.info_provider_layman),
-        ])
+                smart_str(obj.info_provider_operator),
+                smart_str(obj.info_provider_expert),
+                smart_str(obj.mobile_context),
+                smart_str(obj.spatial_coordinates),
+                smart_str(obj.ask_questions),
+                smart_str(obj.suggestions),
+                smart_str(obj.comment),
+                smart_str(obj.personal_profile),
+                smart_str(obj.others_information_need),
+                smart_str(obj.contact_user),
+                ])
         return response
     export_csv.short_description = u"Export the saved data into a CSV file"
 
-admin.site.register(Website,WebsiteAdmin)
-admin.site.register(Post,PostAdmin)
-admin.site.register(WebsiteEvaluation,WebsiteEvaluationAdmin)
+
+class CodeStatisticsAdmin(admin.ModelAdmin):
+    # form = PostAdminForm
+    list_filter = ['worker', 'completion_code']
+    list_display = ['worker', 'completion_code']
+
+
+admin.site.register(Website, WebsiteAdmin)
+admin.site.register(Post, PostAdmin)
+admin.site.register(WebsiteEvaluation, WebsiteEvaluationAdmin)
+admin.site.register(CodeStatistics, CodeStatisticsAdmin)

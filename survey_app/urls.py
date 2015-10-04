@@ -6,5 +6,6 @@ urlpatterns = patterns('',
     url(r'^survey_form', views.survey_view, name='survey_view'),
     url(r'^success$', views.SuccessView.as_view(),name='success_view'),
     url(r'^statistics$', views.StatisticsView.as_view(), name='statistics_view'),
+    url(r'^statistics/code$', views.StatisticsCodeView.as_view(), name='code_view'),
     url(r'^success_code$', views.SuccessCodeView.as_view(), name='success_code_view'),
 )

@@ -12,17 +12,19 @@
         <script type="text/javascript" src="{{ STATIC_URL }}js/jquery.tooltipster.min.js"
                 type="text/javascript"></script>
         <script type="text/javascript" src="{{ STATIC_URL }}js/explanation.js" type="text/javascript"></script>
+
     </head>
     <h4 align="center"><strong>You have so far evaluated {{ evaluation_count }}/{{ total_count }} websites.</strong></h4>
     <form action="{% url 'survey_view' %}" method="post">
         {% csrf_token %}
         <div id="survey_form" class="container">
-
+           <!--
             <div class="row">
                 <div class="col-md-12">
                     <p>An information need describes the problem a person would like to solve.</p>
                 </div>
             </div>
+             -->
             <!--
              <div class="row">
              <div  class="col-md-12">

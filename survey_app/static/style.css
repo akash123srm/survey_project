@@ -32,9 +32,6 @@ padding-top: 120px;
     border: 1px black solid;
 }
 
-#row-2 {
-    margin-top: 20px;
-}
 
 .huge {
     font-size:150%;
@@ -43,4 +40,9 @@ padding-top: 120px;
     border-bottom: 1px solid lightgrey;
     margin-bottom:0.5em;
     margin-top:0.5em;
+}
+
+.code {
+    width: 900px;
+    margin-left: 250px;
 }
