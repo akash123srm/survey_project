@@ -8,4 +8,5 @@ urlpatterns = patterns('',
     url(r'^statistics$', views.StatisticsView.as_view(), name='statistics_view'),
     url(r'^statistics/code$', views.StatisticsCodeView.as_view(), name='code_view'),
     url(r'^success_code$', views.SuccessCodeView.as_view(), name='success_code_view'),
+    url(r'^success_code_download/(.*)/', views.download_success_code_view, name='download_success_code_view'),
 )

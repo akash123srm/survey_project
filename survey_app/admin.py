@@ -52,7 +52,7 @@ class WebsiteEvaluationAdmin(admin.ModelAdmin):
                    'mobile_context','spatial_coordinates','ask_questions','suggestions','comment',
                    'personal_profile','others_information_need','contact_user','user_id']
 
-    actions = ['export_csv','aggregate_data']
+    actions = ['export_csv', 'aggregate_data', 'export_time_statistics']
 
     def aggregate_data(self, request, queryset):
         response = HttpResponse(content_type='text/csv')
@@ -266,12 +266,49 @@ class WebsiteEvaluationAdmin(admin.ModelAdmin):
         return response
     export_csv.short_description = u"Export the saved data into a CSV file"
 
+    def export_time_statistics(modeladmin, request, queryset):
+        response = HttpResponse(content_type='text/csv')
+        response['Content-Disposition'] = 'attachment; filename=time_statistics.csv'
+        writer = csv.writer(response, csv.excel)
+        response.write(u'\ufeff'.encode('utf8')) # BOM (optional...Excel needs it to open UTF-8 file properly)
+        writer.writerow([
+        smart_str(u"User ID"),
+        smart_str(u"URL"),
+        smart_str(u"Time Duration")
+            ])
+        for obj in queryset:
+            writer.writerow([
+                smart_str(obj.user_id),
+                smart_str(obj.post_url),
+                smart_str(obj.time_delta)
+                ])
+
+        return response
+    export_time_statistics.short_description = u"Export the time statistics into a CSV file"
 
 class CodeStatisticsAdmin(admin.ModelAdmin):
     # form = PostAdminForm
     list_filter = ['worker', 'completion_code']
     list_display = ['worker', 'completion_code']
+    actions = ['export_code_statistics']
 
+    def export_code_statistics(modeladmin, request, queryset):
+        response = HttpResponse(content_type='text/csv')
+        response['Content-Disposition'] = 'attachment; filename=code_statistics.csv'
+        writer = csv.writer(response, csv.excel)
+        response.write(u'\ufeff'.encode('utf8')) # BOM (optional...Excel needs it to open UTF-8 file properly)
+        writer.writerow([
+        smart_str(u"Worker ID"),
+        smart_str(u"Completion Code"),
+            ])
+        for obj in queryset:
+            writer.writerow([
+                smart_str(obj.worker),
+                smart_str(obj.completion_code)
+                ])
+
+        return response
+    export_code_statistics.short_description = u"Export the code statistics into a CSV file"
 
 admin.site.register(Website, WebsiteAdmin)
 admin.site.register(Post, PostAdmin)

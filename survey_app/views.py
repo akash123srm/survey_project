@@ -98,7 +98,9 @@ def survey_view(request):
                                                     'evaluation_count': len(posts_evaluated_per_user),
                                                     'total_count': 3,
                                                     'time_value': time_value}
-                      )
+                                                                            )
+
+
 
 
 class SuccessView(TemplateView):
@@ -136,3 +138,15 @@ class SuccessCodeView(TemplateView):
 
     def get_context_data(self, **kwargs):
         pass
+
+from reportlab.pdfgen import canvas
+from django.http import HttpResponse
+
+def download_success_code_view(request,code):
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = 'attachment;filename = "code.pdf"'
+    p  = canvas.Canvas(response)
+    p.drawString(100,100,code)
+    p.showPage()
+    p.save()
+    return response
