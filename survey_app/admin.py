@@ -21,6 +21,21 @@ from .enums import (TimeConstraint, AnswerValidity,
                    DegreeKnowledge)
 
 
+class FraudListFilter(admin.SimpleListFilter):
+    title = 'Workers who might have cheated'
+    parameter_name = 'cheated_workers'
+
+    def lookups(self, request, model_admin):
+        return [
+            ('fraud', 'Fraud Worker')
+            ]
+
+    def queryset(self, request, queryset):
+        if self.value() == 'fraud':
+            return queryset.filter(time_delta__lt=1.0)
+
+
+
 class WebsiteAdmin(admin.ModelAdmin):
     list_display = ['name', 'category']
     list_filter = ['name','category']
@@ -46,7 +61,7 @@ class WebsiteEvaluationAdmin(admin.ModelAdmin):
                     'mobile_context','spatial_coordinates','ask_questions','suggestions','comment',
                     'personal_profile','others_information_need','contact_user','user_id']
 
-    list_filter = ['post_url', 'time_delta', 'time_constraint', 'answer_validity',
+    list_filter = ['post_url', 'time_delta',FraudListFilter,'time_constraint', 'answer_validity',
                    'generality_applicability', 'location_constraint',
                    'degree_knowledge','costs_parameters','info_need_identification','info_provider_layman','info_provider_operator','info_provider_expert',
                    'mobile_context','spatial_coordinates','ask_questions','suggestions','comment',
@@ -276,6 +291,28 @@ class WebsiteEvaluationAdmin(admin.ModelAdmin):
         smart_str(u"URL"),
         smart_str(u"Time Duration")
             ])
+        for obj in queryset:
+            writer.writerow([
+                smart_str(obj.user_id),
+                smart_str(obj.post_url),
+                smart_str(obj.time_delta)
+                ])
+
+        return response
+    export_time_statistics.short_description = u"Export the time statistics into a CSV file"
+
+
+    def invalid_time_statistics(modeladmin, request, queryset):
+        response = HttpResponse(content_type='text/csv')
+        response['Content-Disposition'] = 'attachment; filename=invalid_time_statistics.csv'
+        writer = csv.writer(response, csv.excel)
+        response.write(u'\ufeff'.encode('utf8')) # BOM (optional...Excel needs it to open UTF-8 file properly)
+        writer.writerow([
+        smart_str(u"User ID"),
+        smart_str(u"URL"),
+        smart_str(u"Time Duration")
+            ])
+        queryset = queryset.filter(time_delta)
         for obj in queryset:
             writer.writerow([
                 smart_str(obj.user_id),

@@ -22,7 +22,7 @@ if __name__ == '__main__':
     # CSV Format:
     # Website name,Category of the website, URL_of_acticle
 
-    f = open("static/thesis_data.csv","r")
+    f = open("static/thesis_data_new.csv", "r")
     content = f.read()
     f.close()
     lines = content.split("\n")
